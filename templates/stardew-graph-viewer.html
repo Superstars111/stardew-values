@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stardew Crop Analyzer</title>
+</head>
+<body>
+<main>
+    Note: Values are from a modded Year 4 playthrough.
+    <canvas id="display_graph" data-points="{{ data }}"></canvas>
+    <select name="crops" id="crops">
+        {% for crop in crop_list %}
+        <option value="{{ crop["crop_id"] }}">{{ crop["crop_name"] }}</option>
+        {% endfor %}
+    </select>
+</main>
+</body>
