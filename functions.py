@@ -1,6 +1,6 @@
 from flask import request
 from app import db
-from models import Crop, Wine, Preserve
+from models import Crop
 
 
 def update_data(crop_name: str):
@@ -12,55 +12,38 @@ def update_data(crop_name: str):
         crop.silver_value = request.args.get("crop-silver")
         crop.gold_value = request.args.get("crop-gold")
         crop.iridium_value = request.args.get("crop-iridium")
-
-        wine = Wine.query.filter_by(crop_id=crop.id).first()
-        wine.production_days = request.args.get("wine-production")
-        wine.base_value = request.args.get("wine-base")
-        wine.silver_value = request.args.get("wine-silver")
-        wine.gold_value = request.args.get("wine-gold")
-        wine.iridium_value = request.args.get("wine-iridium")
-
-        preserve = Preserve.query.filter_by(crop_id=crop.id).first()
-        preserve.production_days = request.args.get("preserve-production")
-        preserve.base_value = request.args.get("preserve-base")
-        preserve.silver_value = request.args.get("preserve-silver")
-        preserve.gold_value = request.args.get("preserve-gold")
-        preserve.iridium_value = request.args.get("preserve-iridium")
+        crop.wine_value = request.args.get("wine-base")
+        crop.silver_wine_value = request.args.get("wine-silver")
+        crop.gold_wine_value = request.args.get("wine-gold")
+        crop.iridium_wine_value = request.args.get("wine-iridium")
+        crop.wine_production_days = request.args.get("wine-production")
+        crop.preserve_value = request.args.get("preserve-base")
+        crop.silver_preserve_value = request.args.get("preserve-silver")
+        crop.gold_preserve_value = request.args.get("preserve-gold")
+        crop.iridium_preserve_value = request.args.get("preserve-iridium")
+        crop.preserve_production_days = request.args.get("preserve-production")
 
     else:
         new_crop = Crop(
+            name=request.args.get("crop-name"),
             seed_cost=request.args.get("seed-cost"),
             maturation_days=request.args.get("maturation-days"),
             base_value=request.args.get("crop-base"),
             silver_value=request.args.get("crop-silver"),
             gold_value=request.args.get("crop-gold"),
-            iridium_value=request.args.get("crop-iridium")
-        )
-        new_wine = Wine(
-            production_days=request.args.get("wine-production"),
-            base_value=request.args.get("wine-base"),
-            silver_value=request.args.get("wine-silver"),
-            gold_value=request.args.get("wine-gold"),
-            iridium_value=request.args.get("wine-iridium")
-        )
-        new_preserve = Wine(
-            production_days=request.args.get("preserve-production"),
-            base_value=request.args.get("preserve-base"),
-            silver_value=request.args.get("preserve-silver"),
-            gold_value=request.args.get("preserve-gold"),
-            iridium_value=request.args.get("preserve-iridium")
+            iridium_value=request.args.get("crop-iridium"),
+            wine_value=request.args.get("wine-base"),
+            silver_wine_value=request.args.get("wine-silver"),
+            gold_wine_value=request.args.get("wine-gold"),
+            iridium_wine_value=request.args.get("wine-iridium"),
+            wine_production_days=request.args.get("wine-production"),
+            preserve_value=request.args.get("preserve-base"),
+            silver_preserve_value=request.args.get("preserve-silver"),
+            gold_preserve_value=request.args.get("preserve-gold"),
+            iridium_preserve_value=request.args.get("preserve-iridium"),
+            preserve_production_days=request.args.get("preserve-production")
         )
         db.session.add(new_crop)
-        db.session.add(new_wine)
-        db.session.add(new_preserve)
-
-        db.session.commit()
-
-        new_crop.wine_id = new_wine.id
-        new_crop.preserve_id = new_preserve.id
-        new_wine.crop_id = new_crop.id
-        new_preserve.crop_id = new_crop.id
-
         db.session.commit()
 
 
@@ -74,23 +57,23 @@ def build_crop_list():
                 "crop_id": crop.id
             })
 
+    return crop_list
+
 
 def find_net_values(crop_id: int) -> dict:
     selected_crop = Crop.query.filter_by(id=crop_id).first()
-    selected_wine = Wine.query.filter_by(crop_id=crop_id).first()
-    selected_preserve = Preserve.query.filter_by(crop_id=crop_id).first()
     net_crops = collect_net_profits(selected_crop.base_value,
                                     selected_crop.silver_value,
                                     selected_crop.gold_value,
                                     selected_crop.iridium_value)
-    net_wines = collect_net_profits(selected_wine.base_value,
-                                    selected_wine.silver_value,
-                                    selected_wine.gold_value,
-                                    selected_wine.iridium_value)
-    net_preserves = collect_net_profits(selected_preserve.base_value,
-                                        selected_preserve.silver_value,
-                                        selected_preserve.gold_value,
-                                        selected_preserve.iridium_value)
+    net_wines = collect_net_profits(selected_crop.wine_value,
+                                    selected_crop.silver_wine_value,
+                                    selected_crop.gold_wine_value,
+                                    selected_crop.iridium_wine_value)
+    net_preserves = collect_net_profits(selected_crop.preserve_value,
+                                        selected_crop.silver_preserve_value,
+                                        selected_crop.gold_preserve_value,
+                                        selected_crop.iridium_preserve_value)
 
     return {
         "crop_values": net_crops,
