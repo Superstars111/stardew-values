@@ -86,23 +86,23 @@ def collect_net_profits(base: int, silver: int, gold: int, iridium: int) -> list
     # When stacking in the graph, we want gold (for example) to cause the stack to reach gold height, but to by itself
     # only display the profit netted from gold over previous amounts.
 
-    if base:
+    if silver and base:
         silver_net = silver - base
     else:
         silver_net = silver
 
-    if silver:
+    if gold and silver:
         gold_net = gold - silver
-    elif base:
+    elif gold and base:
         gold_net = gold - base
     else:
         gold_net = gold
 
-    if gold:
+    if iridium and gold:
         iridium_net = iridium - gold
-    elif silver:
+    elif iridium and silver:
         iridium_net = iridium - silver
-    elif base:
+    elif iridium and base:
         iridium_net = iridium - base
     else:
         iridium_net = iridium

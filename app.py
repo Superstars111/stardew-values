@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 # from models import Crop, Wine, Preserve
 from config import Config
+import json
 
 db = SQLAlchemy()
 
@@ -41,7 +42,7 @@ def display():  # put application's code here
         data = {}
 
     variables = {
-        "data": data,
+        "data": json.dumps(data),
         "crop_list": crop_list
     }
     return render_template("stardew-graph-viewer.html", **variables)

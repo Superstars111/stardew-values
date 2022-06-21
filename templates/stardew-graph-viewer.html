@@ -7,12 +7,18 @@
 <body>
 <main>
     Note: Values are from a modded Year 4 playthrough.
-    <canvas id="display_graph" data-points="{{ data }}"></canvas>
-    <select name="crops" id="crops">
+<div style="width: 50em; height: 50em;"><canvas id="display_graph" data-points="{{ data }}"></canvas></div>
+    <form action="">
+    <select name="crops" id="crops" onchange="this.form.submit()">
+        <option value="0" selected>None</option>
         {% for crop in crop_list %}
         <option value="{{ crop["crop_id"] }}">{{ crop["crop_name"] }}</option>
         {% endfor %}
     </select>
+    </form>
     <a href="/insert">Insert Data</a>
 </main>
+<script type="text/javascript" src="{{ url_for('static', filename='chart.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='graph.js') }}"></script>
 </body>
+</html>
